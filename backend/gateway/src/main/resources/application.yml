@@ -1,0 +1,101 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  config:
+    import:
+      - optional:nacos:application-shared.yaml?group=CAMPUS_GROUP&refreshEnabled=true
+  cloud:
+    nacos:
+      server-addr: ${NACOS_SERVER:127.0.0.1:8848}
+      username: ${NACOS_USERNAME:nacos}
+      password: ${NACOS_PASSWORD:nacos}
+      discovery:
+        namespace: ${NACOS_NAMESPACE:}
+        group: CAMPUS_GROUP
+      config:
+        namespace: ${NACOS_NAMESPACE:}
+        group: CAMPUS_GROUP
+        file-extension: yaml
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowed-origin-patterns: "*"
+            allowed-methods: "*"
+            allowed-headers: "*"
+            allow-credentials: true
+            max-age: 3600
+      routes:
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - StripPrefix=2
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/product/**
+          filters:
+            - StripPrefix=2
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=2
+        - id: message-service
+          uri: lb://message-service
+          predicates:
+            - Path=/api/message/**
+          filters:
+            - StripPrefix=2
+
+gateway:
+  auth:
+    # 与 auth-service 的 jwt.secret 必须一致，建议通过 Nacos 共享配置统一
+    secret: ${JWT_SECRET:change-me-to-a-strong-random-32-byte-secret-please}
+    whitelist:
+      - /api/auth/register
+      - /api/auth/login
+      - /api/auth/health/**
+      - /doc.html
+      - /webjars/**
+      - /v3/api-docs/**
+      - /swagger-resources/**
+      - /favicon.ico
+
+# Knife4j 网关聚合文档
+knife4j:
+  gateway:
+    enabled: true
+    # discover：从注册中心自动发现服务并聚合 OpenAPI
+    strategy: discover
+    discover:
+      enabled: true
+      version: openapi3
+      # 仅发现以下 service-id 的文档
+      excluded-services:
+        - gateway
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway
+
+logging:
+  level:
+    org.springframework.cloud.gateway: info

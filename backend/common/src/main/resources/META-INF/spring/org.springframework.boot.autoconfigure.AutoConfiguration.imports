@@ -1,0 +1,4 @@
+com.campus.common.config.GlobalExceptionAutoConfiguration
+com.campus.common.security.PasswordEncoderConfig
+com.campus.common.security.WebMvcContextConfig
+com.campus.common.oss.OssAutoConfiguration

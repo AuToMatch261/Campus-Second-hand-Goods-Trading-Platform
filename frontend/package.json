@@ -1,0 +1,44 @@
+{
+  "name": "campus-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --noEmit",
+    "lint": "eslint . --ext .vue,.ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{vue,ts,tsx,css,scss,md}\"",
+    "sync-api": "pnpm sync-api:auth && pnpm sync-api:user && pnpm sync-api:product && pnpm sync-api:order && pnpm sync-api:message",
+    "sync-api:auth": "openapi-typescript http://localhost:8080/auth-service/v3/api-docs -o src/api/schema/auth.d.ts",
+    "sync-api:user": "openapi-typescript http://localhost:8080/user-service/v3/api-docs -o src/api/schema/user.d.ts",
+    "sync-api:product": "openapi-typescript http://localhost:8080/product-service/v3/api-docs -o src/api/schema/product.d.ts",
+    "sync-api:order": "openapi-typescript http://localhost:8080/order-service/v3/api-docs -o src/api/schema/order.d.ts",
+    "sync-api:message": "openapi-typescript http://localhost:8080/message-service/v3/api-docs -o src/api/schema/message.d.ts"
+  },
+  "dependencies": {
+    "axios": "^1.7.7",
+    "element-plus": "^2.8.5",
+    "pinia": "^2.2.4",
+    "pinia-plugin-persistedstate": "^3.2.3",
+    "vue": "^3.5.12",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.4",
+    "@vitejs/plugin-vue": "^5.1.4",
+    "@vue/tsconfig": "^0.5.1",
+    "eslint": "^9.12.0",
+    "eslint-plugin-vue": "^9.28.0",
+    "openapi-typescript": "^7.4.1",
+    "prettier": "^3.3.3",
+    "sass": "^1.79.4",
+    "typescript": "~5.6.2",
+    "unplugin-auto-import": "^0.18.3",
+    "unplugin-vue-components": "^0.27.4",
+    "vite": "^5.4.8",
+    "vue-tsc": "^2.1.6"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

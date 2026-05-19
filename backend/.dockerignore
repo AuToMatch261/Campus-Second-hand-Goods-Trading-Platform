@@ -1,0 +1,16 @@
+# Maven 构建产物，全部在容器里重新打包
+**/target/
+**/.idea/
+**/*.iml
+**/.vscode/
+
+# 本地 IDE / 系统垃圾
+.DS_Store
+Thumbs.db
+
+# 文档不参与构建
+**/*.md
+
+# 测试报告 / 覆盖率
+**/surefire-reports/
+**/site/

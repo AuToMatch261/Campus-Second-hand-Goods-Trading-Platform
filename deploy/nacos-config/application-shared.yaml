@@ -1,0 +1,75 @@
+# ============================================================
+# 共享配置：首次部署时通过 Nacos UI 或 OpenAPI 创建：
+#   Data ID : application-shared.yaml
+#   Group   : CAMPUS_GROUP
+#   Format  : YAML
+# ============================================================
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://mysql:3306/campus?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: root
+    # 与 deploy/.env 中的 MYSQL_ROOT_PASSWORD 保持一致
+    password: please-change-me-strong
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 5000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  data:
+    redis:
+      host: redis
+      port: 6379
+      # 与 deploy/.env 中的 REDIS_PASSWORD 保持一致
+      password: please-change-me-strong
+      timeout: 3000
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 2
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    default-enum-type-handler: org.apache.ibatis.type.EnumOrdinalTypeHandler
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# 与各业务服务的 application.yml 协议一致；这里集中维护
+jwt:
+  # 必须 ≥ 32 字节；与 deploy/.env 中的 JWT_SECRET 一致
+  secret: please-change-me-to-a-strong-random-32-plus-byte-base64-secret
+  expire-minutes: 120
+  issuer: campus
+
+gateway:
+  auth:
+    secret: ${jwt.secret}
+    whitelist:
+      - /api/auth/register
+      - /api/auth/login
+      - /api/auth/health/**
+      - /api/product/product
+      - /api/product/product/**
+      - /doc.html
+      - /webjars/**
+      - /v3/api-docs/**
+      - /swagger-resources/**
+      - /favicon.ico
+
+logging:
+  level:
+    root: INFO
+    com.campus: INFO
+    org.springframework.cloud.gateway: WARN

@@ -1,0 +1,41 @@
+#---claude--
+.claude/
+
+# --- Java / Maven ---
+target/
+*.class
+*.jar
+*.war
+*.ear
+hs_err_pid*
+
+# --- IntelliJ / VSCode ---
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.classpath
+.project
+.settings/
+
+# --- Node / pnpm ---
+node_modules/
+.pnpm-store/
+dist/
+.vite/
+
+# --- Logs ---
+logs/
+*.log
+
+# --- 本地敏感配置 ---
+.env.local
+.env.*.local
+
+# --- Docker 持久化数据 ---
+docker/data/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
