@@ -4,6 +4,7 @@
 
 ## 目录结构
 
+```text
 my-project/
 ├── frontend/                       ← Vue 项目（不变）
 ├── backend/                        ← Maven 父工程
@@ -15,6 +16,7 @@ my-project/
 │   └── xx-service/                ← 其他业务服务
 ├── docker/                         ← Nacos、MySQL、Redis 的 docker-compose
 ├── deploy/                         ← Nginx 配置、部署脚本
+```
 
 ## 后端模块
 
@@ -91,6 +93,7 @@ pnpm sync-api:auth         # 也可单独同步一个
 3. `git diff src/api/schema/` 看变化，编译期就能发现破坏性改动
 4. 提交「后端接口变更 + 前端类型同步」作为一个 PR，避免漂移
 
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    阶段 0: 准备                                  │
 │                                                                  │
@@ -243,3 +246,4 @@ pnpm sync-api:auth         # 也可单独同步一个
 │                                                                  │
 │  Commit: "chore: production deploy config"                      │
 └─────────────────────────────────────────────────────────────────┘
+```
