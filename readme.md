@@ -1,9 +1,10 @@
 # 项目说明
 
-全栈校园二手物品交易平台应用，前端采用 Vue 3，后端采用 Spring Boot + Spring Cloud 微服务架构。
+全栈校园二手物品交易平台应用，前端采用 Vue 3，后端采用 Spring Boot + Spring Cloud 微服务架构。完全由claudecode生成，这个文件可以稍微修改开发流程用到自己的项目中，作为CLAUDE.md。
 
 ## 目录结构
 
+```text
 my-project/
 ├── frontend/                       ← Vue 项目（不变）
 ├── backend/                        ← Maven 父工程
@@ -15,7 +16,7 @@ my-project/
 │   └── xx-service/                ← 其他业务服务
 ├── docker/                         ← Nacos、MySQL、Redis 的 docker-compose
 ├── deploy/                         ← Nginx 配置、部署脚本
-└── CLAUDE.md
+```
 
 ## 后端模块
 
@@ -92,47 +93,7 @@ pnpm sync-api:auth         # 也可单独同步一个
 3. `git diff src/api/schema/` 看变化，编译期就能发现破坏性改动
 4. 提交「后端接口变更 + 前端类型同步」作为一个 PR，避免漂移
 
-## RabbitMQ 异步事件
-
-订单状态变化通过 RabbitMQ 解耦商品上下架和系统通知，避免在订单事务内做远程调用。
-
-- 中间件：`docker-compose` 里的 `rabbitmq:3.13-management`，管理 UI `http://localhost:15672`（默认账号 `campus / campus123`）
-- Exchange：`campus.order.events`（topic）；DLX：`campus.dlx`
-- 路由键：`order.created` / `order.confirmed` / `order.cancelled`
-- 生产者：`order-service` 在事务 `AFTER_COMMIT` 后发布 `OrderEvent`（见 `OrderEventForwarder`），事务回滚则不发
-- 消费者：
-  - `product-service` 监听 `order.cancelled` → `tryRelist`（幂等：商品已上架直接返回 true）
-  - `message-service` 监听 `order.#` → 写 `t_notification`（按 `(event_id, user_id)` 去重）
-
-> **超售防线仍是同步的**：下单时 order-service 通过 Feign 调 `/internal/product/{id}/sold` 做 CAS 锁定状态，没改成事件——超售只能同步拦截。
-> `relist` 已下线 Feign 端点，仅由事件触发；如需手动恢复上架走 DB 或加管理后台。
-
-事件 DTO 在 `common/mq/event/OrderEvent`，路由键常量在 `common/mq/RabbitMqConstants`。新增事件类型时先在这里登记，再同步更新生产者/消费者两侧。
-
-## Elasticsearch 搜索
-
-商品列表搜索从 MySQL `LIKE` 改成 ES，支持中文分词、按价格/时间/浏览量排序。
-
-- 中间件：`docker-compose` 里的 `elasticsearch` 服务用自定义 Dockerfile（`docker/elasticsearch/Dockerfile`）安装 `analysis-ik` 插件，8.13.4 单节点；端口 `9200`
-- 索引：`products`（映射文件 `product-service/src/main/resources/es/product-index.json`，启动时 `ProductIndexInitializer` 按需创建；不存在就建，已存在就跳过，不覆盖现有 mapping）
-- 字段分词：`title`/`description` 用 `ik_max_word` 索引、`ik_smart` 搜索；`price` 用 `scaled_float(100)`；`category` / `status` / `sellerId` 用精确匹配
-
-数据同步走 RabbitMQ：
-
-- Exchange：`campus.product.events`（topic）；队列 `search.product.events`
-- product-service 在 publish / update / offShelf / softDelete / markSold / tryRelist 后通过 `ApplicationEventPublisher` 发本地 `ProductEvent`；`ProductEventForwarder` 在 `AFTER_COMMIT` 后投递 MQ
-- product-service 自己起 `ProductEventListener` 消费，按 DB 当前状态把 doc 写到 ES（UPSERTED）或删除（DELETED）
-- `viewCount` 高频写不发事件，由 `reindex` 兜底
-
-运维：
-
-- 重建索引：`POST /api/product/internal/product/reindex?purge=true`（仅内部调用；purge=true 会先删索引再按 mapping 重建）
-- ES 不可用时，`ProductSearchService.search` 返回空结果而非 500，避免商品列表 UI 全挂
-
-环境变量：`ES_URIS`（默认 `http://127.0.0.1:9200`）、`ES_PRODUCTS_INDEX`（默认 `products`）。
-
-
-
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    阶段 0: 准备                                  │
 │                                                                  │
@@ -285,3 +246,4 @@ pnpm sync-api:auth         # 也可单独同步一个
 │                                                                  │
 │  Commit: "chore: production deploy config"                      │
 └─────────────────────────────────────────────────────────────────┘
+```
