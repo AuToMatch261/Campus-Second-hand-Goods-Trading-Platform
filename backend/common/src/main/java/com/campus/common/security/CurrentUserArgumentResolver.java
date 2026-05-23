@@ -11,7 +11,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 public class CurrentUserArgumentResolver implements HandlerMethodArgumentResolver {
-
+    private String a;
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         if (!parameter.hasParameterAnnotation(CurrentUser.class)) return false;
